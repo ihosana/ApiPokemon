@@ -8,6 +8,7 @@ class TelaPokemonCapturado extends StatefulWidget {
   @override
   TelaPokemonCapturadoState createState() => TelaPokemonCapturadoState();
 }
+
 class TelaPokemonCapturadoState extends State<TelaPokemonCapturado> {
   late PokemonGo pokemonGo;
   late DatabaseHelper databaseHelper;
@@ -22,18 +23,16 @@ class TelaPokemonCapturadoState extends State<TelaPokemonCapturado> {
   }
 
   void initializeDatabase() async {
-    databaseHelper = await $FloorDatabaseHelper
-        .databaseBuilder('PokemonGo.db')
-        .build();
+    databaseHelper =
+        await $FloorDatabaseHelper.databaseBuilder('PokemonGo.db').build();
     dao = databaseHelper.pokemonDao;
     await listarPokemons();
   }
 
   Future<void> listarPokemons() async {
     pokemons = await dao.getAll();
-    setState(() {}); // Atualize o estado após recuperar os pokémons do banco de dados
-
-  
+    setState(
+        () {}); // Atualize o estado após recuperar os pokémons do banco de dados
   }
 
   @override
@@ -47,51 +46,43 @@ class TelaPokemonCapturadoState extends State<TelaPokemonCapturado> {
 
     // TODO: implement build
     return ListView.builder(
-      itemCount: pokemons.length,
-      itemBuilder: (context, index) {
-        final pokemon = pokemons[index];
-        return PokemonItem(
-          name: pokemon.nome,
-          imageUrl: "", id: index,
-        );
-      },
-    );
+        itemCount: pokemons.length,
+        itemBuilder: (context, index) => Gesto(
+              pokemon: pokemons[index],
+            ));
   }
 }
-
 
 // itemBuilder: (context, i) => ListItem(contato: snapshot.data![i]),
 class Gesto extends StatelessWidget {
   final PokemonGo pokemon;
-   Gesto({super.key, required this.pokemon});
-  
+  Gesto({super.key, required this.pokemon});
+
   @override
   Widget build(BuildContext context) {
-   
-    return GestureDetector(
+    return Container(
+     height: 80,
+     width: 80,
+     child: GestureDetector(
       onTap: () {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text("Single Tap"),
-          
         ));
       },
       onLongPress: () {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text("Long Press"),
         ));
-          Card(
-         child:  ListTile(
-          leading: CircleAvatar( 
-          backgroundImage: NetworkImage(pokemon.imageUrl)
-          ),
-           title: Text(pokemon.nome),
-           subtitle: Text("id: "+pokemon.id.toString()),
-           
-        ),
-        );
       },
-       
+       child:Card(
+          child: ListTile(
+            leading:
+                CircleAvatar(backgroundImage: NetworkImage(pokemon.imageUrl)),
+            title: Text(pokemon.nome),
+            subtitle: Text("id: " + pokemon.id.toString()),
+          ),
+        )
+    )
     );
-    
   }
-} 
+}
