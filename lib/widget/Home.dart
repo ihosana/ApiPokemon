@@ -11,6 +11,7 @@ import 'package:terceira_prova/main.dart';
 import 'package:terceira_prova/model/Pokemon.dart';
 import 'package:terceira_prova/widget/Card.dart';
 import 'package:terceira_prova/widget/TelaCaptura.dart';
+import 'package:terceira_prova/widget/TelaPokemonCapturado.dart';
 import 'package:terceira_prova/widget/TelaSobre.dart';
 
 class Home extends State<MyApp> with TickerProviderStateMixin {
@@ -25,7 +26,7 @@ class Home extends State<MyApp> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     super.initState();
     initConnectivity();
     _connectivitySubscription =
@@ -98,6 +99,7 @@ class Home extends State<MyApp> with TickerProviderStateMixin {
             tabs: const [
               Tab(icon: Icon(Icons.home)),
               Tab(icon: Icon(Icons.catching_pokemon)),
+              Tab(icon: Icon(Icons.data_saver_off)),
               Tab(icon: Icon(Icons.panorama_wide_angle_select_sharp)),
             ],
           ),
@@ -119,83 +121,15 @@ class Home extends State<MyApp> with TickerProviderStateMixin {
                 TextButton(
                   onPressed: () => _tabController.animateTo(0),
                   child: _connectionStatus != ConnectivityResult.none
-                      ? printaPokemon(numerosSorteados: sortearNumeros(),)
+                      ? TelaCaptura(numerosSorteados: sortearNumeros(),)
                       : Text('Sem conexão com a internet'),
                 ),
               ],
             )),
+            TelaPokemonCapturado(),
             TelaSobre(),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class printaPokemon extends StatelessWidget {
-  List<int> numerosSorteados = [];
-  int cont = 0;
-  printaPokemon({
-    super.key,
-    required this.numerosSorteados
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 650,
-      child: FutureBuilder(
-        future: Pokemon.fetchPokemonList(numerosSorteados),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator.adaptive(),
-            );
-          }
-          if (snapshot.hasError) {
-            return Center(
-              child: Text("Erro snapshort: " + snapshot.error.toString()),
-            );
-          }
-
-          final List<Map<String, dynamic>> pokemons =
-              snapshot.data as List<Map<String, dynamic>>;
-
-          return ListView.builder(
-            itemCount: 6,
-            itemBuilder: (context, index) {
-              final id = pokemons[index];
-              final pokemonName = id['name'];
-
-              final List<dynamic> forms = id['forms'] as List<dynamic>;
-                final Map<String, dynamic> firstForm = forms.first;
-                final String pokemonUrl = firstForm['url'];
-                print(pokemonUrl);
-              
-
-              return FutureBuilder(
-                future: Pokemon.getPokemonImage(pokemonUrl),
-                builder: (context, imageSnapshot) {
-                  if (imageSnapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return CircularProgressIndicator.adaptive();
-                  }
-                  if (imageSnapshot.hasError) {
-                    return Text("Erro aqui" + imageSnapshot.error.toString());
-                  }
-
-                  final String imageUrl = imageSnapshot.data as String;
-
-                  // print(numerosSorteados);
-                  return PokemonItem(
-                    imageUrl: imageUrl,
-                    name: pokemonName,
-                  );
-                },
-              );
-            },
-          );
-        },
       ),
     );
   }

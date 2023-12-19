@@ -69,7 +69,7 @@ class Pokemon {
  try {
     
   for(int i in pokemonNumbers ){
-    print("numero sorteado"+i.toString());
+    //print("numero sorteado"+i.toString());
 final res = await http.get(
        Uri.parse('https://pokeapi.co/api/v2/pokemon/$i'),
       );

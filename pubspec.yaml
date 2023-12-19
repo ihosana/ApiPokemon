@@ -41,6 +41,8 @@ dependencies:
 
 dev_dependencies:
 
+  floor_generator: ^1.4.2
+  build_runner: ^2.1.2
   flutter_launcher_icons: "^0.13.1"
 flutter_launcher_icons:
   android: "launcher_icon"
