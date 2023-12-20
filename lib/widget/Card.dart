@@ -12,10 +12,12 @@ class PokemonItem extends StatefulWidget {
   final String name;
   final String imageUrl;
 final int id;
+final String altura;
+final String peso;
  /*   final String altura;
   final String peso;
   final int forca;*/
-  PokemonItem({required this.name, required this.imageUrl, required this.id});
+  PokemonItem({required this.name, required this.imageUrl, required this.id, required this.altura, required this.peso});
 
   @override
   _PokemonItemState createState() => _PokemonItemState();
@@ -24,6 +26,7 @@ final int id;
 class _PokemonItemState extends State<PokemonItem> {
   late PokemonGo pokemonGo ;
 
+  late List<PokemonGo> pokemons = [];
  late DatabaseHelper databaseHelper; 
    late PokemonDao dao;
   bool clicou = true;
@@ -47,12 +50,13 @@ class _PokemonItemState extends State<PokemonItem> {
     setState(() {
        clicou= false;
        isCadastradoMudou=true;
+       
            });
-  pokemonGo =  PokemonGo(widget.id, widget.name, "1.20", "20kg", 200, isCadastradoMudou, widget.imageUrl);
+  pokemonGo =  PokemonGo(widget.id, widget.name,widget.altura , widget.peso, 200, isCadastradoMudou, widget.imageUrl);
     // Insira o PokemonBD no banco de dados
      dao.insertPokemon(pokemonGo);
     // Faça algo quando o botão for pressionado
-    print('Botão pressionado');
+    print(isCadastradoMudou);
     // Atualize o estado para desativar o botão
   }
   @override
@@ -63,9 +67,11 @@ class _PokemonItemState extends State<PokemonItem> {
           backgroundImage: NetworkImage(widget.imageUrl),
         ),
         title: Text(widget.name),
-        trailing: PokebolaButton(
+        trailing:
+         PokebolaButton(
 
-          onPressed:(){clicou ? apertouNoBotao() : null;}, 
+          onPressed:(){clicou ? apertouNoBotao() : null;}
+          , 
           ativado: clicou ,
           cadastrado: isCadastradoMudou,
         ),
@@ -75,7 +81,12 @@ class _PokemonItemState extends State<PokemonItem> {
 
  
 }
-
-
-
-
+/*Future<bool> verificar()async{
+   final pokemonJaExiste = await dao.getAll();
+   for(var i in pokemonJaExiste){
+      if(i.isCadastrado==true){
+ return true ;
+      }
+   }
+   return false;
+ } */

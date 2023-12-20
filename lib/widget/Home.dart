@@ -11,12 +11,12 @@ import 'package:terceira_prova/main.dart';
 import 'package:terceira_prova/model/Pokemon.dart';
 import 'package:terceira_prova/widget/Card.dart';
 import 'package:terceira_prova/widget/TelaCaptura.dart';
+import 'package:terceira_prova/widget/TelaHome.dart';
 import 'package:terceira_prova/widget/TelaPokemonCapturado.dart';
 import 'package:terceira_prova/widget/TelaSobre.dart';
 
 class Home extends State<MyApp> with TickerProviderStateMixin {
   List<Map<String, dynamic>> pokemons = [];
-
   bool _isLoading = false;
   bool _hasInternet = false;
   late TabController _tabController;
@@ -68,10 +68,6 @@ class Home extends State<MyApp> with TickerProviderStateMixin {
   }
 
   List<int> sortearNumeros() {
-    if (6 > 1017) {
-      throw ArgumentError(
-          'Quantidade de números a sortear maior que a faixa disponível.');
-    }
 
     List<int> numerosSorteados = [];
     while (numerosSorteados.length < 6) {
@@ -103,18 +99,17 @@ class Home extends State<MyApp> with TickerProviderStateMixin {
               Tab(icon: Icon(Icons.panorama_wide_angle_select_sharp)),
             ],
           ),
-          title: const Text('Pokemon'),
-          actions: [
-            Padding(
-              padding: EdgeInsets.only(right: 30, top: 10),
-              child: Row(children: [Tab(icon: Icon(Icons.people_rounded))]),
-            )
-          ],
+          title: const Text('Pokemon', style: TextStyle(fontSize: 20, color: Colors.white,fontWeight: FontWeight.bold), // Altere a cor aqui
+         ),
+          
+         
         ),
         body: TabBarView(
           controller: _tabController,
           children: [
-            const Icon(Icons.directions_car),
+            Container(
+              child: TelaHome(),
+            ),
             Center(
                 child: Column(
               children: [

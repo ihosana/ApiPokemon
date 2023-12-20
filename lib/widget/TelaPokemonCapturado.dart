@@ -3,6 +3,8 @@ import 'package:terceira_prova/database/Database.dart';
 import 'package:terceira_prova/model/PokemonDAO.dart';
 import 'package:terceira_prova/model/PokemonGo.dart';
 import 'package:terceira_prova/widget/Card.dart';
+import 'package:terceira_prova/widget/ExcluirPokemon.dart';
+import 'package:terceira_prova/widget/TelaDetalhes.dart';
 
 class TelaPokemonCapturado extends StatefulWidget {
   @override
@@ -10,7 +12,6 @@ class TelaPokemonCapturado extends StatefulWidget {
 }
 
 class TelaPokemonCapturadoState extends State<TelaPokemonCapturado> {
-  late PokemonGo pokemonGo;
   late DatabaseHelper databaseHelper;
   late PokemonDao dao;
   late List<PokemonGo> pokemons = []; // Inicialize com uma lista vazia
@@ -19,7 +20,9 @@ class TelaPokemonCapturadoState extends State<TelaPokemonCapturado> {
   @override
   void initState() {
     super.initState();
-    initializeDatabase();
+    setState(() {
+      initializeDatabase();
+    });
   }
 
   void initializeDatabase() async {
@@ -61,28 +64,50 @@ class Gesto extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-     height: 80,
-     width: 80,
-     child: GestureDetector(
-      onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Single Tap"),
-        ));
-      },
-      onLongPress: () {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Long Press"),
-        ));
-      },
-       child:Card(
-          child: ListTile(
-            leading:
-                CircleAvatar(backgroundImage: NetworkImage(pokemon.imageUrl)),
-            title: Text(pokemon.nome),
-            subtitle: Text("id: " + pokemon.id.toString()),
-          ),
-        )
-    )
-    );
+        height: 80,
+        width: 80,
+        child: GestureDetector(
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text("Toque simples...."),
+              ));
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => TelaDetalhes(
+                          name: pokemon.nome,
+                          imagem: pokemon.imageUrl,
+                          id: pokemon.id,
+                          altura: pokemon.altura,
+                          peso: pokemon.peso,
+                          cadastrado: pokemon.isCadastrado,
+                        )),
+              );
+            },
+            onLongPress: () {
+              //DELETARRR
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text("Toque longo"),
+              ));
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => SoltarPokemon(pokemon: pokemon)),
+              ).then((result) {
+                if (result != null && result is bool && result) {
+                  TelaPokemonCapturadoState telaState = context
+                      .findAncestorStateOfType<TelaPokemonCapturadoState>()!;
+                  telaState.listarPokemons();
+                }
+              });
+            },
+            child: Card(
+              child: ListTile(
+                leading: CircleAvatar(
+                    backgroundImage: NetworkImage(pokemon.imageUrl)),
+                title: Text(pokemon.nome),
+                subtitle: Text("id: " + pokemon.id.toString()),
+              ),
+            )));
   }
 }
